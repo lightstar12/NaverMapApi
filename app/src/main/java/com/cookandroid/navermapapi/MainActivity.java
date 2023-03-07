@@ -61,7 +61,6 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         CameraPosition cameraPosition = new CameraPosition(myLatLng, 16);
         naverMap.setCameraPosition(cameraPosition);
     }
-
     public void requestGeocode() {
         try {
             BufferedReader bufferedReader;
