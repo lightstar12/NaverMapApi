@@ -12,6 +12,7 @@ import android.widget.Toast;
 
 import com.naver.maps.geometry.LatLng;
 import com.naver.maps.map.CameraPosition;
+import com.naver.maps.map.CameraUpdate;
 import com.naver.maps.map.MapView;
 import com.naver.maps.map.NaverMap;
 import com.naver.maps.map.OnMapReadyCallback;
@@ -34,7 +35,6 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         setContentView(R.layout.activity_main);
 
         Button btnLatLng = (Button) findViewById(R.id.btnLatLng);
-        TextView textView = (TextView) findViewById(R.id.textView);
 
         mapView = (MapView) findViewById(R.id.mapView);
 
@@ -53,21 +53,14 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
             }
         });
     }
-
-    @Override
-    public void onMapReady(@NonNull NaverMap naverMap) {
-        this.naverMap = naverMap;
-
-        CameraPosition cameraPosition = new CameraPosition(myLatLng, 16);
-        naverMap.setCameraPosition(cameraPosition);
-    }
     public void requestGeocode() {
+        TextView textView = (TextView) findViewById(R.id.textView);
+
         try {
             BufferedReader bufferedReader;
             StringBuilder stringBuilder = new StringBuilder();
-            String addr = "분당구 성남대로 601";
-            String query = "https://naveropenapi.apigw.ntruss.com/map-geocode/v2/geocode?query="
-                    + URLEncoder.encode(addr, "UTF-8");
+            String addr = "분당구 불정로 6";
+            String query = "https://naveropenapi.apigw.ntruss.com/map-geocode/v2/geocode?query=" + URLEncoder.encode(addr, "UTF-8");
             URL url = new URL(query);
             HttpURLConnection conn = (HttpURLConnection) url.openConnection();
             if (conn != null) {
@@ -75,7 +68,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                 conn.setReadTimeout(5000);
                 conn.setRequestMethod("GET");
                 conn.setRequestProperty("X-NCP-APIGW-API-KEY-ID", "1a4moto0jq");
-                conn.setRequestProperty("X-NCP-APIGW-API-KEY", "qnvQjfEo5rjDGICDEVNMpNwfPWuCBaChCD3GibGQ");
+                conn.setRequestProperty("X-NCP-APIGW-API-KEY", "CuER5Kov8SAwhboKQMabhNekT9dY6cpoLIEbSnhz");
                 conn.setDoInput(true);
 
                 int responseCode = conn.getResponseCode();
@@ -102,14 +95,24 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                 indexLast = stringBuilder.indexOf("\",\"distance\":");
                 String y = stringBuilder.substring(indexFirst + 5, indexLast);
 
-                textView.setText("X: " + x + "Y: " + y);
-
+                textView.setText("위도:" + y + "경도:" + x);
+                myLatLng = new LatLng(Double.parseDouble(y), Double.parseDouble(x));
+                naverMap.moveCamera(CameraUpdate.scrollTo(myLatLng));
                 bufferedReader.close();
                 conn.disconnect();
             }
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    @Override
+    public void onMapReady(@NonNull NaverMap naverMap) {
+        this.naverMap = naverMap;
+
+        CameraUpdate cameraUpdate = CameraUpdate.scrollTo(myLatLng);
+        naverMap.moveCamera(cameraUpdate);
 
     }
+
 }
