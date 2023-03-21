@@ -16,6 +16,7 @@ import com.naver.maps.map.CameraUpdate;
 import com.naver.maps.map.MapView;
 import com.naver.maps.map.NaverMap;
 import com.naver.maps.map.OnMapReadyCallback;
+import com.naver.maps.map.overlay.PathOverlay;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
@@ -23,12 +24,14 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLEncoder;
 import java.nio.Buffer;
+import java.util.Arrays;
 
 public class MainActivity extends AppCompatActivity implements OnMapReadyCallback {
     private MapView mapView;
     private static NaverMap naverMap;
     private LatLng myLatLng = new LatLng(37.3399, 126.733);
-    TextView textView;
+    PathOverlay path = new PathOverlay();
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -47,21 +50,21 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                 new Thread(new Runnable() {
                     @Override
                     public void run() {
-                        requestGeocode();
+                        requestDirections5();
                     }
                 }).start();
-
+                requestPathoverlay();
                 naverMap.moveCamera(CameraUpdate.scrollTo(myLatLng));
-            }
+                path.setMap(naverMap);
+                }
         });
     }
     public void requestGeocode() {
         TextView textView = (TextView) findViewById(R.id.textView);
-
         try {
             BufferedReader bufferedReader;
             StringBuilder stringBuilder = new StringBuilder();
-            String addr = "안양동 명학역";
+            String addr = "만안구 만안로 20";
             String query = "https://naveropenapi.apigw.ntruss.com/map-geocode/v2/geocode?query=" + URLEncoder.encode(addr, "UTF-8");
             URL url = new URL(query);
             HttpURLConnection conn = (HttpURLConnection) url.openConnection();
@@ -70,7 +73,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                 conn.setReadTimeout(5000);
                 conn.setRequestMethod("GET");
                 conn.setRequestProperty("X-NCP-APIGW-API-KEY-ID", "1a4moto0jq");
-                conn.setRequestProperty("X-NCP-APIGW-API-KEY", "CuER5Kov8SAwhboKQMabhNekT9dY6cpoLIEbSnhz");
+                conn.setRequestProperty("X-NCP-APIGW-API-KEY", "Hrs1KMok5jKF8Gt8AtRRXbSPRNrpZ6HllIh1g0Nx");
                 conn.setDoInput(true);
 
                 int responseCode = conn.getResponseCode();
@@ -123,7 +126,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                 conn2.setReadTimeout(5000);
                 conn2.setRequestMethod("GET");
                 conn2.setRequestProperty("X-NCP-APIGW-API-KEY-ID", "1a4moto0jq");
-                conn2.setRequestProperty("X-NCP-APIGW-API-KEY", "CuER5Kov8SAwhboKQMabhNekT9dY6cpoLIEbSnhz");
+                conn2.setRequestProperty("X-NCP-APIGW-API-KEY", "Hrs1KMok5jKF8Gt8AtRRXbSPRNrpZ6HllIh1g0Nx");
                 conn2.setDoInput(true);
 
                 int responseCode2 = conn2.getResponseCode();
@@ -138,10 +141,54 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                 while ((line2 = bufferedReader2.readLine()) != null) {
                     stringBuilder2.append(line2 + "\n");
                 }
+
+                int indexFirst2;
+                int indexLast2;
+
+                indexFirst2 = stringBuilder2.indexOf("\"path\":");
+                indexLast2 = stringBuilder2.indexOf("\"section\":");
+                String pathpath = stringBuilder2.substring(indexFirst2 + 9, indexLast2 - 3 );
+
+
+                bufferedReader2.close();
+                conn2.disconnect();
             }
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    public void requestPathoverlay() {
+        path.setCoords(Arrays.asList(
+                new LatLng(37.3803681, 126.9273403),
+                new LatLng(37.3804166, 126.9272880),
+                new LatLng(37.3804507, 126.9272753),
+                new LatLng(37.3804841, 126.9272762),
+                new LatLng(37.3805167, 126.9273008),
+                new LatLng(37.3805875, 126.9274053),
+                new LatLng(37.3806202, 126.9274502),
+                new LatLng(37.3806393, 126.9274941),
+                new LatLng(37.3806360, 126.9275529),
+                new LatLng(37.3806971, 126.9275118),
+                new LatLng(37.3809409, 126.9272411),
+                new LatLng(37.3809563, 126.9272568),
+                new LatLng(37.3810123, 126.9272767),
+                new LatLng(37.3810917, 126.9272975),
+                new LatLng(37.3812580, 126.9275741),
+                new LatLng(37.3813389, 126.9277068),
+                new LatLng(37.3813462, 126.9277181),
+                new LatLng(37.3814361, 126.9278597),
+                new LatLng(37.3816995, 126.9282745),
+                new LatLng(37.3815646, 126.9285387),
+                new LatLng(37.3815075, 126.9286498),
+                new LatLng(37.3814468, 126.9287779),
+                new LatLng(37.3814245, 126.9288244),
+                new LatLng(37.3814518, 126.9288694),
+                new LatLng(37.3814536, 126.9288739),
+                new LatLng(37.3816579, 126.9291807),
+                new LatLng(37.3816733, 126.9292100),
+                new LatLng(37.3816888, 126.9292392)
+        ));
     }
     @Override
     public void onMapReady(@NonNull NaverMap naverMap) {
