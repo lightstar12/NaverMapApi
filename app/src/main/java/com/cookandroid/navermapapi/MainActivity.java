@@ -50,6 +50,8 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                         requestGeocode();
                     }
                 }).start();
+
+                naverMap.moveCamera(CameraUpdate.scrollTo(myLatLng));
             }
         });
     }
@@ -59,7 +61,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         try {
             BufferedReader bufferedReader;
             StringBuilder stringBuilder = new StringBuilder();
-            String addr = "분당구 불정로 6";
+            String addr = "안양동 명학역";
             String query = "https://naveropenapi.apigw.ntruss.com/map-geocode/v2/geocode?query=" + URLEncoder.encode(addr, "UTF-8");
             URL url = new URL(query);
             HttpURLConnection conn = (HttpURLConnection) url.openConnection();
@@ -97,7 +99,6 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
 
                 textView.setText("위도:" + y + "경도:" + x);
                 myLatLng = new LatLng(Double.parseDouble(y), Double.parseDouble(x));
-                naverMap.moveCamera(CameraUpdate.scrollTo(myLatLng));
                 bufferedReader.close();
                 conn.disconnect();
             }
@@ -106,6 +107,42 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         }
     }
 
+    public void requestDirections5() {
+        try {
+            BufferedReader bufferedReader2;
+            StringBuilder stringBuilder2 = new StringBuilder();
+            String startaddr = "126.9266623,37.3799";
+            String goaladdr = "126.9352657,37.3852172";
+            String query2 = "https://naveropenapi.apigw.ntruss.com/map-direction/v1/driving?start="
+                    + URLEncoder.encode(startaddr, "UTF-8")
+                    + "&goal=" + URLEncoder.encode(goaladdr, "UTF-8");
+            URL url2 = new URL(query2);
+            HttpURLConnection conn2 = (HttpURLConnection) url2.openConnection();
+            if (conn2 != null) {
+                conn2.setConnectTimeout(5000);
+                conn2.setReadTimeout(5000);
+                conn2.setRequestMethod("GET");
+                conn2.setRequestProperty("X-NCP-APIGW-API-KEY-ID", "1a4moto0jq");
+                conn2.setRequestProperty("X-NCP-APIGW-API-KEY", "CuER5Kov8SAwhboKQMabhNekT9dY6cpoLIEbSnhz");
+                conn2.setDoInput(true);
+
+                int responseCode2 = conn2.getResponseCode();
+
+                if (responseCode2 == 200) {
+                    bufferedReader2 = new BufferedReader(new InputStreamReader(conn2.getInputStream()));
+                } else {
+                    bufferedReader2 = new BufferedReader(new InputStreamReader(conn2.getErrorStream()));
+                }
+
+                String line2 = null;
+                while ((line2 = bufferedReader2.readLine()) != null) {
+                    stringBuilder2.append(line2 + "\n");
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
     @Override
     public void onMapReady(@NonNull NaverMap naverMap) {
         this.naverMap = naverMap;
