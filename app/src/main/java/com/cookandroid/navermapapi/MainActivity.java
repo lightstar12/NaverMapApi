@@ -5,6 +5,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.location.Geocoder;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
@@ -24,13 +25,17 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLEncoder;
 import java.nio.Buffer;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 public class MainActivity extends AppCompatActivity implements OnMapReadyCallback {
     private MapView mapView;
     private static NaverMap naverMap;
     private LatLng myLatLng = new LatLng(37.3399, 126.733);
+    String[] pathpathpath = new String[100];
     PathOverlay path = new PathOverlay();
+    List<LatLng> LatLngs = new ArrayList<LatLng>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -147,8 +152,14 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
 
                 indexFirst2 = stringBuilder2.indexOf("\"path\":");
                 indexLast2 = stringBuilder2.indexOf("\"section\":");
-                String pathpath = stringBuilder2.substring(indexFirst2 + 9, indexLast2 - 3 );
+                String pathpath = stringBuilder2.substring(indexFirst2 + 9, indexLast2 - 3);
+                pathpathpath = pathpath.split("\\],\\[");
 
+                for(int i = 0; i < pathpathpath.length; i++){
+                    String[] Path = pathpathpath[i].split(",");
+                    LatLngs.add(new LatLng(Double.parseDouble(Path[1]), Double.parseDouble(Path[0])));
+                }
+                LatLngs.removeAll(Arrays.asList("", null));
 
                 bufferedReader2.close();
                 conn2.disconnect();
@@ -159,36 +170,9 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     }
 
     public void requestPathoverlay() {
-        path.setCoords(Arrays.asList(
-                new LatLng(37.3803681, 126.9273403),
-                new LatLng(37.3804166, 126.9272880),
-                new LatLng(37.3804507, 126.9272753),
-                new LatLng(37.3804841, 126.9272762),
-                new LatLng(37.3805167, 126.9273008),
-                new LatLng(37.3805875, 126.9274053),
-                new LatLng(37.3806202, 126.9274502),
-                new LatLng(37.3806393, 126.9274941),
-                new LatLng(37.3806360, 126.9275529),
-                new LatLng(37.3806971, 126.9275118),
-                new LatLng(37.3809409, 126.9272411),
-                new LatLng(37.3809563, 126.9272568),
-                new LatLng(37.3810123, 126.9272767),
-                new LatLng(37.3810917, 126.9272975),
-                new LatLng(37.3812580, 126.9275741),
-                new LatLng(37.3813389, 126.9277068),
-                new LatLng(37.3813462, 126.9277181),
-                new LatLng(37.3814361, 126.9278597),
-                new LatLng(37.3816995, 126.9282745),
-                new LatLng(37.3815646, 126.9285387),
-                new LatLng(37.3815075, 126.9286498),
-                new LatLng(37.3814468, 126.9287779),
-                new LatLng(37.3814245, 126.9288244),
-                new LatLng(37.3814518, 126.9288694),
-                new LatLng(37.3814536, 126.9288739),
-                new LatLng(37.3816579, 126.9291807),
-                new LatLng(37.3816733, 126.9292100),
-                new LatLng(37.3816888, 126.9292392)
-        ));
+        path.setCoords(
+                LatLngs
+        );
     }
     @Override
     public void onMapReady(@NonNull NaverMap naverMap) {
