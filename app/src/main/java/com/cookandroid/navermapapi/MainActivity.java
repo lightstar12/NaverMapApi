@@ -55,12 +55,13 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                 new Thread(new Runnable() {
                     @Override
                     public void run() {
+                        requestGeocode();
                         requestDirections5();
                     }
                 }).start();
-                requestPathoverlay();
+//                requestPathoverlay();
                 naverMap.moveCamera(CameraUpdate.scrollTo(myLatLng));
-                path.setMap(naverMap);
+//                path.setMap(naverMap);
                 }
         });
     }
@@ -69,7 +70,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         try {
             BufferedReader bufferedReader;
             StringBuilder stringBuilder = new StringBuilder();
-            String addr = "만안구 만안로 20";
+            String addr = "만안구 성결대학로 53";
             String query = "https://naveropenapi.apigw.ntruss.com/map-geocode/v2/geocode?query=" + URLEncoder.encode(addr, "UTF-8");
             URL url = new URL(query);
             HttpURLConnection conn = (HttpURLConnection) url.openConnection();
@@ -155,12 +156,6 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                 String pathpath = stringBuilder2.substring(indexFirst2 + 9, indexLast2 - 3);
                 pathpathpath = pathpath.split("\\],\\[");
 
-                for(int i = 0; i < pathpathpath.length; i++){
-                    String[] Path = pathpathpath[i].split(",");
-                    LatLngs.add(new LatLng(Double.parseDouble(Path[1]), Double.parseDouble(Path[0])));
-                }
-                LatLngs.removeAll(Arrays.asList("", null));
-
                 bufferedReader2.close();
                 conn2.disconnect();
             }
@@ -170,9 +165,6 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     }
 
     public void requestPathoverlay() {
-        path.setCoords(
-                LatLngs
-        );
     }
     @Override
     public void onMapReady(@NonNull NaverMap naverMap) {
