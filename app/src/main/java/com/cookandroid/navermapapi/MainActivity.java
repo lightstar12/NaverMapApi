@@ -57,14 +57,27 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                     public void run() {
                         requestGeocode();
                         requestDirections5();
+                        Log.e("OUT: LatLans[1]", Double.toString(LatLngs.get(1).latitude));
                     }
                 }).start();
-                naverMap.moveCamera(CameraUpdate.scrollTo(myLatLng));
+                // run과 그 밑에 코드가 동시에 실행 됨. run 이후에 실행되게 콜백함수를 사용해야 함.
+                Log.e("check", "OK");
                 requestPathoverlay();
+                naverMap.moveCamera(CameraUpdate.scrollTo(myLatLng));
                 path.setMap(naverMap);
-                }
+            }
         });
     }
+
+    @Override
+    public void onMapReady(@NonNull NaverMap naverMap) {
+        this.naverMap = naverMap;
+
+        CameraUpdate cameraUpdate = CameraUpdate.scrollTo(myLatLng);
+        naverMap.moveCamera(cameraUpdate);
+
+    }
+
     public void requestGeocode() {
         TextView textView = (TextView) findViewById(R.id.textView);
         try {
@@ -79,7 +92,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                 conn.setReadTimeout(5000);
                 conn.setRequestMethod("GET");
                 conn.setRequestProperty("X-NCP-APIGW-API-KEY-ID", "1a4moto0jq");
-                conn.setRequestProperty("X-NCP-APIGW-API-KEY", "Hrs1KMok5jKF8Gt8AtRRXbSPRNrpZ6HllIh1g0Nx");
+                conn.setRequestProperty("X-NCP-APIGW-API-KEY", "iRCAHtqQHp2j9PiZKo0OFz0oBCEIyGaZaNda3wyn");
                 conn.setDoInput(true);
 
                 int responseCode = conn.getResponseCode();
@@ -132,7 +145,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                 conn2.setReadTimeout(5000);
                 conn2.setRequestMethod("GET");
                 conn2.setRequestProperty("X-NCP-APIGW-API-KEY-ID", "1a4moto0jq");
-                conn2.setRequestProperty("X-NCP-APIGW-API-KEY", "Hrs1KMok5jKF8Gt8AtRRXbSPRNrpZ6HllIh1g0Nx");
+                conn2.setRequestProperty("X-NCP-APIGW-API-KEY", "iRCAHtqQHp2j9PiZKo0OFz0oBCEIyGaZaNda3wyn");
                 conn2.setDoInput(true);
 
                 int responseCode2 = conn2.getResponseCode();
@@ -155,9 +168,13 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                 indexLast2 = stringBuilder2.indexOf("\"section\":");
                 String pathpath = stringBuilder2.substring(indexFirst2 + 9, indexLast2 - 3);
                 pathpathpath = Arrays.asList(pathpath.split("\\],\\["));
-
-
-
+                LatLngs.clear();
+                for (int i = 0; i < pathpathpath.size(); i++) {
+                    String[] paTH = pathpathpath.get(i).split(",");
+                    LatLngs.add(new LatLng(Double.parseDouble(paTH[1]), Double.parseDouble(paTH[0])));
+                }
+                Log.e("LatLngs size", Integer.toString(LatLngs.size()));
+                Log.e("IN : LatLans[1]", Double.toString(LatLngs.get(0).latitude));
                 bufferedReader2.close();
                 conn2.disconnect();
             }
@@ -167,20 +184,12 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     }
 
     public void requestPathoverlay() {
+
         LatLngs.add(new LatLng(37.3803681, 126.9273403));
         LatLngs.add(new LatLng(37.3804166, 126.9272880));
-        LatLngs.add(new LatLng(37.3804507, 126.9272753));
-        LatLngs.add(new LatLng(37.3804841, 126.9272762));
-        LatLngs.add(new LatLng(37.3805167, 126.9273008));
+//        LatLngs.add(new LatLng(37.3804507, 126.9272753));
+//        LatLngs.add(new LatLng(37.3804841, 126.9272762));
+//        LatLngs.add(new LatLng(37.3805167, 126.9273008));
         path.setCoords(LatLngs);
     }
-    @Override
-    public void onMapReady(@NonNull NaverMap naverMap) {
-        this.naverMap = naverMap;
-
-        CameraUpdate cameraUpdate = CameraUpdate.scrollTo(myLatLng);
-        naverMap.moveCamera(cameraUpdate);
-
-    }
-
 }
