@@ -56,15 +56,22 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                     @Override
                     public void run() {
                         requestGeocode();
-                        requestDirections5();
-                        Log.e("OUT: LatLans[1]", Double.toString(LatLngs.get(1).latitude));
+                        requestDirections5(new Runnable() {
+                            @Override
+                            public void run() {
+                                runOnUiThread(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        requestPathoverlay();
+                                        naverMap.moveCamera(CameraUpdate.scrollTo(myLatLng));
+                                        path.setMap(naverMap);
+                                    }
+                                });
+                            }
+                        });
                     }
                 }).start();
                 // run과 그 밑에 코드가 동시에 실행 됨. run 이후에 실행되게 콜백함수를 사용해야 함.
-                Log.e("check", "OK");
-                requestPathoverlay();
-                naverMap.moveCamera(CameraUpdate.scrollTo(myLatLng));
-                path.setMap(naverMap);
             }
         });
     }
@@ -119,7 +126,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                 indexLast = stringBuilder.indexOf("\",\"distance\":");
                 String y = stringBuilder.substring(indexFirst + 5, indexLast);
 
-                textView.setText("위도:" + y + "경도:" + x);
+                textView.setText("위도:" + y + " 경도:" + x);
                 myLatLng = new LatLng(Double.parseDouble(y), Double.parseDouble(x));
                 bufferedReader.close();
                 conn.disconnect();
@@ -129,7 +136,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         }
     }
 
-    public void requestDirections5() {
+    public void requestDirections5(Runnable callback) {
         try {
             BufferedReader bufferedReader2;
             StringBuilder stringBuilder2 = new StringBuilder();
@@ -173,20 +180,21 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                     String[] paTH = pathpathpath.get(i).split(",");
                     LatLngs.add(new LatLng(Double.parseDouble(paTH[1]), Double.parseDouble(paTH[0])));
                 }
-                Log.e("LatLngs size", Integer.toString(LatLngs.size()));
-                Log.e("IN : LatLans[1]", Double.toString(LatLngs.get(0).latitude));
                 bufferedReader2.close();
                 conn2.disconnect();
             }
         } catch (Exception e) {
             e.printStackTrace();
         }
+        if (callback != null) {
+            callback.run();
+        }
     }
 
     public void requestPathoverlay() {
 
-        LatLngs.add(new LatLng(37.3803681, 126.9273403));
-        LatLngs.add(new LatLng(37.3804166, 126.9272880));
+//        LatLngs.add(new LatLng(37.3803681, 126.9273403));
+//        LatLngs.add(new LatLng(37.3804166, 126.9272880));
 //        LatLngs.add(new LatLng(37.3804507, 126.9272753));
 //        LatLngs.add(new LatLng(37.3804841, 126.9272762));
 //        LatLngs.add(new LatLng(37.3805167, 126.9273008));
