@@ -2,29 +2,29 @@ package com.cookandroid.navermapapi;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
 
-import android.location.Geocoder;
+import android.Manifest;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.naver.maps.geometry.LatLng;
-import com.naver.maps.map.CameraPosition;
 import com.naver.maps.map.CameraUpdate;
+import com.naver.maps.map.LocationTrackingMode;
 import com.naver.maps.map.MapView;
 import com.naver.maps.map.NaverMap;
 import com.naver.maps.map.OnMapReadyCallback;
 import com.naver.maps.map.overlay.PathOverlay;
+import com.naver.maps.map.util.FusedLocationSource;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLEncoder;
-import java.nio.Buffer;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -37,6 +37,13 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     PathOverlay path = new PathOverlay();
     List<LatLng> LatLngs = new ArrayList<LatLng>();
 
+    private FusedLocationSource locationSource;
+    private static final int LOCATION_PERMISSION_REQUEST_CODE = 1000;
+    private static final String[] PERMISSIONS = {
+            Manifest.permission.ACCESS_FINE_LOCATION,
+            Manifest.permission.ACCESS_COARSE_LOCATION
+    };
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -48,6 +55,8 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
 
         mapView.onCreate(savedInstanceState);
         mapView.getMapAsync(this);
+
+        locationSource = new FusedLocationSource(this, LOCATION_PERMISSION_REQUEST_CODE);
 
         btnLatLng.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -78,10 +87,12 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
 
     @Override
     public void onMapReady(@NonNull NaverMap naverMap) {
-        this.naverMap = naverMap;
 
-        CameraUpdate cameraUpdate = CameraUpdate.scrollTo(myLatLng);
-        naverMap.moveCamera(cameraUpdate);
+        this.naverMap = naverMap;
+        naverMap.setLocationSource(locationSource);
+        ActivityCompat.requestPermissions(this, PERMISSIONS, LOCATION_PERMISSION_REQUEST_CODE);
+//        CameraUpdate cameraUpdate = CameraUpdate.scrollTo(myLatLng);
+//        naverMap.moveCamera(cameraUpdate);
 
     }
 
@@ -192,12 +203,20 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     }
 
     public void requestPathoverlay() {
-
-//        LatLngs.add(new LatLng(37.3803681, 126.9273403));
-//        LatLngs.add(new LatLng(37.3804166, 126.9272880));
-//        LatLngs.add(new LatLng(37.3804507, 126.9272753));
-//        LatLngs.add(new LatLng(37.3804841, 126.9272762));
-//        LatLngs.add(new LatLng(37.3805167, 126.9273008));
         path.setCoords(LatLngs);
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
+        // 212 줄 코드가 문제임
+        if (locationSource != null && locationSource.onRequestPermissionsResult(requestCode, permissions, grantResults)) {
+            if (!locationSource.isActivated()) {
+                naverMap.setLocationTrackingMode(LocationTrackingMode.None);
+            } else {
+                naverMap.setLocationTrackingMode(LocationTrackingMode.Follow);
+            }
+        } else {
+            super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        }
     }
 }
