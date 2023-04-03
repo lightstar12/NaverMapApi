@@ -6,7 +6,6 @@ import androidx.core.app.ActivityCompat;
 
 import android.Manifest;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
@@ -33,9 +32,9 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     private MapView mapView;
     private static NaverMap naverMap;
     private LatLng myLatLng = new LatLng(37.3399, 126.733);
-    List<String> pathpathpath = new ArrayList<String>();
+    List<String> pathpathpath = new ArrayList<>();
     PathOverlay path = new PathOverlay();
-    List<LatLng> LatLngs = new ArrayList<LatLng>();
+    List<LatLng> LatLngs = new ArrayList<>();
 
     private FusedLocationSource locationSource;
     private static final int LOCATION_PERMISSION_REQUEST_CODE = 1000;
@@ -207,7 +206,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     }
 
     @Override
-    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         // 212 줄 코드가 문제임
         if (locationSource != null && locationSource.onRequestPermissionsResult(requestCode, permissions, grantResults)) {
             if (!locationSource.isActivated()) {
