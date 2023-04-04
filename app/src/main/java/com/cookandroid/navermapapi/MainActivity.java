@@ -11,7 +11,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.pm.PackageManager;
-import android.location.Location;
 import android.location.LocationManager;
 import android.os.Bundle;
 import android.view.View;
@@ -52,10 +51,6 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
             Manifest.permission.ACCESS_COARSE_LOCATION
     };
 
-    ArrayList mPendingIntentList;
-
-    String intentKey = "coffeeProximity";
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -94,7 +89,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
             // for ActivityCompat#requestPermissions for more details.
             return;
         }
-        locationManager.addProximityAlert(37.3852172, 126.9352657, 1000, 1, pendingIntent);
+        locationManager.addProximityAlert(37.3799, 126.9266623, 1000, 10, pendingIntent);
 
         registerReceiver(proximityAlertReceiver, new IntentFilter("com.example.PROXIMITY_ALERT"));
 
@@ -120,7 +115,6 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                         });
                     }
                 }).start();
-                // run과 그 밑에 코드가 동시에 실행 됨. run 이후에 실행되게 콜백함수를 사용해야 함.
             }
         });
     }
@@ -248,7 +242,6 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        // 212 줄 코드가 문제임
         if (locationSource != null && locationSource.onRequestPermissionsResult(requestCode, permissions, grantResults)) {
             if (!locationSource.isActivated()) {
                 naverMap.setLocationTrackingMode(LocationTrackingMode.None);
