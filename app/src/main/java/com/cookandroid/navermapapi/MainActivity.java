@@ -44,7 +44,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     private static String DIRECTION5_URL = "https://naveropenapi.apigw.ntruss.com/map-direction/v1/driving?start=";
     public String start_latlng = "126.9266623,37.3799";
     public String goal_latlng = "126.9352657,37.3852172";
-
+    // 푸쉬 되라
     private MapView mapView;
     private static NaverMap naverMap;
     private LatLng myLatLng;
