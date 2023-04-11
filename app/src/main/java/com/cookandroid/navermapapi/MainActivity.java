@@ -37,13 +37,20 @@ import java.util.Arrays;
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity implements OnMapReadyCallback {
+    private static String API_KEY_ID = "1a4moto0jq";
+    private static String SECRET_KEY_ID = "iRCAHtqQHp2j9PiZKo0OFz0oBCEIyGaZaNda3wyn";
+    private static String GEOCODE_URL = "https://naveropenapi.apigw.ntruss.com/map-geocode/v2/geocode?query=";
+    public String string_address = "만안구 성결대학로 53";
+    private static String DIRECTION5_URL = "https://naveropenapi.apigw.ntruss.com/map-direction/v1/driving?start=";
+    public String start_latlng = "126.9266623,37.3799";
+    public String goal_latlng = "126.9352657,37.3852172";
+
     private MapView mapView;
     private static NaverMap naverMap;
-    private LatLng myLatLng = new LatLng(37.3399, 126.733);
-    List<String> pathpathpath = new ArrayList<>();
+    private LatLng myLatLng;
+    List<String> paths = new ArrayList<>();
     PathOverlay path = new PathOverlay();
     List<LatLng> LatLngs = new ArrayList<>();
-
     private FusedLocationSource locationSource;
     private static final int LOCATION_PERMISSION_REQUEST_CODE = 1000;
     private static final String[] PERMISSIONS = {
@@ -125,8 +132,6 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         this.naverMap = naverMap;
         naverMap.setLocationSource(locationSource);
         ActivityCompat.requestPermissions(this, PERMISSIONS, LOCATION_PERMISSION_REQUEST_CODE);
-//        CameraUpdate cameraUpdate = CameraUpdate.scrollTo(myLatLng);
-//        naverMap.moveCamera(cameraUpdate);
 
     }
 
@@ -135,16 +140,15 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         try {
             BufferedReader bufferedReader;
             StringBuilder stringBuilder = new StringBuilder();
-            String addr = "만안구 성결대학로 53";
-            String query = "https://naveropenapi.apigw.ntruss.com/map-geocode/v2/geocode?query=" + URLEncoder.encode(addr, "UTF-8");
+            String query = GEOCODE_URL + URLEncoder.encode(string_address, "UTF-8");
             URL url = new URL(query);
             HttpURLConnection conn = (HttpURLConnection) url.openConnection();
             if (conn != null) {
                 conn.setConnectTimeout(5000);
                 conn.setReadTimeout(5000);
                 conn.setRequestMethod("GET");
-                conn.setRequestProperty("X-NCP-APIGW-API-KEY-ID", "1a4moto0jq");
-                conn.setRequestProperty("X-NCP-APIGW-API-KEY", "iRCAHtqQHp2j9PiZKo0OFz0oBCEIyGaZaNda3wyn");
+                conn.setRequestProperty("X-NCP-APIGW-API-KEY-ID", API_KEY_ID);
+                conn.setRequestProperty("X-NCP-APIGW-API-KEY", SECRET_KEY_ID);
                 conn.setDoInput(true);
 
                 int responseCode = conn.getResponseCode();
@@ -185,19 +189,16 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         try {
             BufferedReader bufferedReader2;
             StringBuilder stringBuilder2 = new StringBuilder();
-            String startaddr = "126.9266623,37.3799";
-            String goaladdr = "126.9352657,37.3852172";
-            String query2 = "https://naveropenapi.apigw.ntruss.com/map-direction/v1/driving?start="
-                    + URLEncoder.encode(startaddr, "UTF-8")
-                    + "&goal=" + URLEncoder.encode(goaladdr, "UTF-8");
+            String query2 = DIRECTION5_URL + URLEncoder.encode(start_latlng, "UTF-8")
+                    + "&goal=" + URLEncoder.encode(goal_latlng, "UTF-8");
             URL url2 = new URL(query2);
             HttpURLConnection conn2 = (HttpURLConnection) url2.openConnection();
             if (conn2 != null) {
                 conn2.setConnectTimeout(5000);
                 conn2.setReadTimeout(5000);
                 conn2.setRequestMethod("GET");
-                conn2.setRequestProperty("X-NCP-APIGW-API-KEY-ID", "1a4moto0jq");
-                conn2.setRequestProperty("X-NCP-APIGW-API-KEY", "iRCAHtqQHp2j9PiZKo0OFz0oBCEIyGaZaNda3wyn");
+                conn2.setRequestProperty("X-NCP-APIGW-API-KEY-ID", API_KEY_ID);
+                conn2.setRequestProperty("X-NCP-APIGW-API-KEY", SECRET_KEY_ID);
                 conn2.setDoInput(true);
 
                 int responseCode2 = conn2.getResponseCode();
@@ -219,10 +220,10 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                 indexFirst2 = stringBuilder2.indexOf("\"path\":");
                 indexLast2 = stringBuilder2.indexOf("\"section\":");
                 String pathpath = stringBuilder2.substring(indexFirst2 + 9, indexLast2 - 3);
-                pathpathpath = Arrays.asList(pathpath.split("\\],\\["));
+                paths = Arrays.asList(pathpath.split("\\],\\["));
                 LatLngs.clear();
-                for (int i = 0; i < pathpathpath.size(); i++) {
-                    String[] paTH = pathpathpath.get(i).split(",");
+                for (int i = 0; i < paths.size(); i++) {
+                    String[] paTH = paths.get(i).split(",");
                     LatLngs.add(new LatLng(Double.parseDouble(paTH[1]), Double.parseDouble(paTH[0])));
                 }
                 bufferedReader2.close();
