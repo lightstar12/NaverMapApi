@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string-array name="list_of_location">
+    <string-array name="list_of_location_1">
         <!-- 1호선 -->
         <item>소요산_동두천시 평화로 2925</item>
         <item>동두천_동두천시 평화로 2687</item>
@@ -100,6 +100,8 @@
         <item>배방_아산시 배방읍 온천대로 1967</item>
         <item>온양온천_아산시 온천대로 1496</item>
         <item>신창_아산시 신창면 행목로 50</item>
+    </string-array>
+    <string-array name="list_of_location_2">
         <!-- 2호선 -->
         <item>신설동_동대문구 왕산로 1</item>
         <item>신답_성동구 천호대로 232</item>
@@ -151,6 +153,8 @@
         <item>왕십리_성동구 왕십리로 300</item>
         <item>한양대_성동구 왕십리로 206</item>
         <item>뚝섬_성동구 아차산로 18</item>
+    </string-array>
+    <string-array name="list_of_location_3">
         <!-- 3호선 -->
         <item>대화_고양시 일산서구 중앙로 1569</item>
         <item>주엽_고양시 일산서구 중앙로 1432</item>
@@ -196,6 +200,8 @@
         <item>가락시장_송파구 송파대로 257</item>
         <item>경찰병원_송파구 중대로 149</item>
         <item>오금_송파구 오금로 321</item>
+    </string-array>
+    <string-array name="list_of_location_4">
         <!-- 4호선 -->
         <item>진접_남양주시 진접읍 경복대로 244</item>
         <item>오남_남양주시 오남읍 진건오남로 929</item>
@@ -248,6 +254,8 @@
         <item>신길온천_안산시 단원구 황고개로 2</item>
         <item>정왕_시흥시 마유로 418번길 15</item>
         <item>오이도_시흥시 역전로 430</item>
+    </string-array>
+    <string-array name="list_of_location_5">
         <!-- 5호선 -->
         <item>방화_강서구 금낭화로 132</item>
         <item>개화산_강서구 양천로 22</item>
@@ -274,7 +282,7 @@
         <item>서대문_종로구 통일로 126</item>
         <item>광화문_종로구 세종대로 172</item>
         <item>종로3가_종로구 돈화문로 11길 26</item>
-        <item>을지로4가_</item>
+        <item>을지로4가_중구 창경궁로 51</item>
         <item>동대문역사문화공원_중구 마른내로 162</item>
         <item>청구_중구 청구로 77</item>
         <item>신금호_성동구 금호로 154</item>
@@ -304,6 +312,8 @@
         <item>개롱_송파구 오금로 402</item>
         <item>거여_송파구 오금로 499</item>
         <item>마천_송파구 마천로 57길 7</item>
+    </string-array>
+    <string-array name="list_of_location_6">
         <!-- 6호선 -->
         <item>역촌_은평구 서오릉로 63</item>
         <item>불광_은평구 통일로 723-1</item>
@@ -342,8 +352,5 @@
         <item>석계_노원구 화랑로 347-1</item>
         <item>태릉입구_노원구 화랑로 429</item>
         <item>화랑대_노원구 화랑로 510</item>
-        <item>봉화산_중랑구 신내로 232</item>
-        <item>신내_중랑구 용마산로136길 32</item>
-        <!-- 7호선 -->
     </string-array>
 </resources>

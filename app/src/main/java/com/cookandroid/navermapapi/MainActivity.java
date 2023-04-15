@@ -38,22 +38,35 @@ import java.util.Arrays;
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity implements OnMapReadyCallback {
+    // API KEY VALUE
     private static String API_KEY_ID = "1a4moto0jq";
     private static String SECRET_KEY_ID = "iRCAHtqQHp2j9PiZKo0OFz0oBCEIyGaZaNda3wyn";
+    // GEOCODE URL
     private static String GEOCODE_URL = "https://naveropenapi.apigw.ntruss.com/map-geocode/v2/geocode?query=";
-    public String string_address = "부천시 소사로 284";
     public String station_address;
+    // DIRECTION5 URL
     private static String DIRECTION5_URL = "https://naveropenapi.apigw.ntruss.com/map-direction/v1/driving?start=";
+    // DIRECTION5 Latlng
     public String start_latlng = "126.793438,37.429655";
     public String goal_latlng = "126.792732,37.431915";
-    // 푸쉬 되라
+    // NAVER MAP VIEW
     private MapView mapView;
     private static NaverMap naverMap;
+    // Chasing Location
     private LatLng myLatLng;
-    List<String> paths = new ArrayList<>();
+    // OVERLAY PATH
     PathOverlay path = new PathOverlay();
+    // PATH LIST(String)
+    List<String> paths = new ArrayList<>();
+    // PATH LIST(LatLng)
     List<LatLng> LatLngs = new ArrayList<>();
+    // Find my location
     private FusedLocationSource locationSource;
+    // THE WHOLE STATION
+    int[] resourceIds = new int[]{
+            R.array.list_of_location_1, R.array.list_of_location_2, R.array.list_of_location_3,
+            R.array.list_of_location_4, R.array.list_of_location_5, R.array.list_of_location_6
+    };
     private static final int LOCATION_PERMISSION_REQUEST_CODE = 1000;
     private static final String[] PERMISSIONS = {
             Manifest.permission.ACCESS_FINE_LOCATION,
@@ -75,18 +88,6 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         locationSource = new FusedLocationSource(this, LOCATION_PERMISSION_REQUEST_CODE);
 
         /* 추가 부분 */
-        LocationManager locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
-
-        BroadcastReceiver proximityAlertReceiver = new BroadcastReceiver() {
-            @Override
-            public void onReceive(Context context, Intent intent) {
-                Toast.makeText(getApplicationContext(), "목표 근접 중", Toast.LENGTH_LONG).show();
-            }
-        };
-
-        Intent proximityIntent = new Intent("com.example.PROXIMITY_ALERT");
-        PendingIntent pendingIntent = PendingIntent.getBroadcast(this, 0
-                , proximityIntent, PendingIntent.FLAG_MUTABLE);
 
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
                 != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this,
@@ -100,9 +101,6 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
             // for ActivityCompat#requestPermissions for more details.
             return;
         }
-        locationManager.addProximityAlert(37.3799, 126.9266623, 1000, 10, pendingIntent);
-
-        registerReceiver(proximityAlertReceiver, new IntentFilter("com.example.PROXIMITY_ALERT"));
 
         btnLatLng.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -140,8 +138,10 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     }
 
     public void requestGeocode() {
-        String test_station = "명학";
-        test = getResources().getStringArray(R.array.list_of_location);
+        String test_station = "을지로4가";
+        String station = "5";
+        int stringId = getResources().getIdentifier("list_of_location_" + station, "array", getPackageName());
+        test = getResources().getStringArray(stringId);
         for (int t = 0; t < test.length; t++) {
             String[] subway_Info = test[t].split("_");
             String station_name = subway_Info[0];
@@ -149,7 +149,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                 station_address = subway_Info[1];
                 break;
             } else {
-                return;
+                continue;
             }
         }
         TextView textView = (TextView) findViewById(R.id.textView);
