@@ -23,6 +23,7 @@ import com.naver.maps.map.CameraUpdate;
 import com.naver.maps.map.LocationTrackingMode;
 import com.naver.maps.map.MapView;
 import com.naver.maps.map.NaverMap;
+import com.naver.maps.map.NaverMapSdk;
 import com.naver.maps.map.OnMapReadyCallback;
 import com.naver.maps.map.overlay.PathOverlay;
 import com.naver.maps.map.util.FusedLocationSource;
@@ -40,10 +41,11 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     private static String API_KEY_ID = "1a4moto0jq";
     private static String SECRET_KEY_ID = "iRCAHtqQHp2j9PiZKo0OFz0oBCEIyGaZaNda3wyn";
     private static String GEOCODE_URL = "https://naveropenapi.apigw.ntruss.com/map-geocode/v2/geocode?query=";
-    public String string_address = "만안구 성결대학로 53";
+    public String string_address = "부천시 소사로 284";
+    public String station_address;
     private static String DIRECTION5_URL = "https://naveropenapi.apigw.ntruss.com/map-direction/v1/driving?start=";
-    public String start_latlng = "126.9266623,37.3799";
-    public String goal_latlng = "126.9352657,37.3852172";
+    public String start_latlng = "126.793438,37.429655";
+    public String goal_latlng = "126.792732,37.431915";
     // 푸쉬 되라
     private MapView mapView;
     private static NaverMap naverMap;
@@ -57,7 +59,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
             Manifest.permission.ACCESS_FINE_LOCATION,
             Manifest.permission.ACCESS_COARSE_LOCATION
     };
-
+    private String[] test;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -86,7 +88,9 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         PendingIntent pendingIntent = PendingIntent.getBroadcast(this, 0
                 , proximityIntent, PendingIntent.FLAG_MUTABLE);
 
-        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
+                != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this,
+                Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             // TODO: Consider calling
             //    ActivityCompat#requestPermissions
             // here to request the missing permissions, and then overriding
@@ -136,11 +140,23 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     }
 
     public void requestGeocode() {
+        String test_station = "명학";
+        test = getResources().getStringArray(R.array.list_of_location);
+        for (int t = 0; t < test.length; t++) {
+            String[] subway_Info = test[t].split("_");
+            String station_name = subway_Info[0];
+            if (station_name.equals(test_station)) {
+                station_address = subway_Info[1];
+                break;
+            } else {
+                return;
+            }
+        }
         TextView textView = (TextView) findViewById(R.id.textView);
         try {
             BufferedReader bufferedReader;
             StringBuilder stringBuilder = new StringBuilder();
-            String query = GEOCODE_URL + URLEncoder.encode(string_address, "UTF-8");
+            String query = GEOCODE_URL + URLEncoder.encode(station_address, "UTF-8");
             URL url = new URL(query);
             HttpURLConnection conn = (HttpURLConnection) url.openConnection();
             if (conn != null) {
